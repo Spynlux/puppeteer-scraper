@@ -16,7 +16,7 @@ app.get("/scrape", async (req, res) => {
 
     try {
         const browser = await puppeteer.launch({
-            executablePath: await chromium.executablePath, // Usa Chrome optimizado
+            executablePath: await chromium.executablePath || "/opt/render/.cache/puppeteer/chrome",
             args: chromium.args,
             headless: chromium.headless,
             defaultViewport: chromium.defaultViewport

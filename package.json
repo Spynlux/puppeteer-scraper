@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "postinstall": "npx puppeteer-core browsers install chrome",
     "start": "node server.js --no-sandbox --disable-setuid-sandbox"
   },
   "keywords": [],
