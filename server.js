@@ -15,7 +15,7 @@ app.get("/scrape", async (req, res) => {
 
     try {
         const browser = await puppeteer.launch({
-            executablePath: puppeteer.executablePath(), // Usa la versión de Puppeteer preinstalada
+            executablePath: puppeteer.executablePath(), // Detecta la versión preinstalada
             args: [
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
