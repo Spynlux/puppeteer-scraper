@@ -1,5 +1,5 @@
 const express = require("express");
-const puppeteer = require("puppeteer-core");
+const puppeteer = require("puppeteer");
 const cors = require("cors");
 
 const app = express();
@@ -35,7 +35,6 @@ app.get("/scrape", async (req, res) => {
         });
 
         const content = await page.content();
-
         await browser.close();
         res.json({ html: content });
 
