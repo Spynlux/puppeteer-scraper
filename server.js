@@ -15,7 +15,7 @@ app.get("/scrape", async (req, res) => {
 
     try {
         const browser = await puppeteer.launch({
-            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || "/opt/render/.cache/puppeteer/chrome/linux-134.0.6998.35/chrome-linux64/chrome",
+            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || puppeteer.executablePath(),
             args: [
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
@@ -27,16 +27,17 @@ app.get("/scrape", async (req, res) => {
         });
 
         const page = await browser.newPage();
-        await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36");
+        await page.setUserAgent(
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
+        );
         await page.setViewport({ width: 1280, height: 800 });
 
         console.log("Navegando a la URL:", url);
         await page.goto(url, {
-            waitUntil: "networkidle2", // Esperar hasta que la red esté inactiva
-            timeout: 60000 // Aumentar el tiempo de espera
+            waitUntil: "networkidle2",
+            timeout: 60000
         });
 
-        // Extraer el HTML renderizado
         const content = await page.content();
 
         await browser.close();
