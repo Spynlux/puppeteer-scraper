@@ -15,12 +15,27 @@ app.get("/scrape", async (req, res) => {
 
     try {
         const browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+            args: [
+                "--no-sandbox",
+                "--disable-setuid-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-gpu",
+                "--ignore-certificate-errors"
+            ],
+            headless: "new"
         });
-        const page = await browser.newPage();
-        await page.goto(url, { waitUntil: "domcontentloaded" });
 
-        // Extraer el HTML de la página ya renderizada
+        const page = await browser.newPage();
+        await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36");
+        await page.setViewport({ width: 1280, height: 800 });
+
+        console.log("Navegando a la URL:", url);
+        await page.goto(url, {
+            waitUntil: "networkidle2", // Esperar hasta que la red esté inactiva
+            timeout: 60000 // Aumentar el tiempo de espera
+        });
+
+        // Extraer el HTML renderizado
         const content = await page.content();
 
         await browser.close();
@@ -28,7 +43,7 @@ app.get("/scrape", async (req, res) => {
 
     } catch (error) {
         console.error("Error en Puppeteer:", error);
-        res.status(500).json({ error: "Error al procesar la URL" });
+        res.status(500).json({ error: "Error al procesar la URL", details: error.message });
     }
 });
 
