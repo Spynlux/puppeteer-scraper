@@ -1,5 +1,6 @@
 const express = require("express");
-const puppeteer = require("puppeteer");
+const chromium = require("chrome-aws-lambda");
+const puppeteer = require("puppeteer-core");
 const cors = require("cors");
 
 const app = express();
@@ -15,24 +16,16 @@ app.get("/scrape", async (req, res) => {
 
     try {
         const browser = await puppeteer.launch({
-            executablePath: puppeteer.executablePath(), // Detecta la versión preinstalada
-            args: [
-                "--no-sandbox",
-                "--disable-setuid-sandbox",
-                "--disable-dev-shm-usage",
-                "--disable-gpu",
-                "--ignore-certificate-errors"
-            ],
-            headless: "new"
+            executablePath: await chromium.executablePath, // Usa Chrome optimizado
+            args: chromium.args,
+            headless: chromium.headless,
+            defaultViewport: chromium.defaultViewport
         });
 
         const page = await browser.newPage();
         await page.setUserAgent(
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
         );
-        await page.setViewport({ width: 1280, height: 800 });
-
-        console.log("Navegando a la URL:", url);
         await page.goto(url, {
             waitUntil: "networkidle2",
             timeout: 60000
